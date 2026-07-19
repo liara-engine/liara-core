@@ -1,0 +1,16 @@
+{
+  "name": "liara-core",
+  "version": "0.0.1",
+  "description": "The core library for the Liara game engine.",
+  "homepage": "https://github.com/liara-engine/liara-core",
+  "license": "MIT",
+  "dependencies": [],
+  "features": {
+    "tests": {
+      "description": "Build the liara-core test suite.",
+      "dependencies": [
+        "doctest"
+      ]
+    }
+  }
+}
