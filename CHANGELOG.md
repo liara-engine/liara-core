@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2](https://github.com/liara-engine/liara-core/compare/v0.0.1...v0.0.2) (2026-07-20)
+
+
+### Bug Fixes
+
+* **cmake:** update error message for missing Liara::Interfaces to include documentation link ([9fb181d](https://github.com/liara-engine/liara-core/commit/9fb181d439b3c34cc3267de3c8625380dc4857f3))
+
 ## [0.0.1](https://github.com/liara-engine/liara-core/compare/v0.0.1...v0.0.1) (2026-07-19)
 
 
