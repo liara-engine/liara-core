@@ -2,6 +2,7 @@
 #include <liara/core/core.h>
 #include <liara/core/LiaraCore.h>
 #include <liara/modules.h>
+#include <liara/renderer/packet.h>
 #include <liara/result.h>
 #include <liara/version.h>
 
@@ -36,7 +37,7 @@ uint32_t liara_core_version() {
 
 // NOLINTBEGIN(cppcoreguidelines-owning-memory)
 // NOLINTBEGIN(readability-identifier-naming)
-liara_result liara_core_create(liara_renderer_handle_t* renderer_handle, liara_core_handle_t** out_core) {
+liara_result_t liara_core_create(liara_renderer_handle_t* renderer_handle, liara_core_handle_t** out_core) {
     // NOLINTEND(readability-identifier-naming)
     if (out_core == nullptr) { return LIARA_RESULT_NULL_POINTER; }
     if (renderer_handle == nullptr) { return LIARA_RESULT_NULL_POINTER; }
@@ -50,7 +51,7 @@ liara_result liara_core_create(liara_renderer_handle_t* renderer_handle, liara_c
 
 // NOLINTBEGIN(cppcoreguidelines-owning-memory)
 // NOLINTBEGIN(readability-identifier-naming)
-liara_result liara_core_destroy(const liara_core_handle_t* core_handle) {
+liara_result_t liara_core_destroy(const liara_core_handle_t* core_handle) {
     // NOLINTEND(readability-identifier-naming)
     if (core_handle == nullptr) { return LIARA_RESULT_NULL_POINTER; }
     if (!core_handle->m_Valid) { return LIARA_RESULT_INVALID_STATE; }
