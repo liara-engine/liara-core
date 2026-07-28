@@ -3,8 +3,6 @@
 
 #include <doctest/doctest.h>
 
-TEST_CASE("Dummy Test") {
-    CHECK(true);
-}
+TEST_CASE("Dummy Test") { CHECK(true); }
 
 // NOLINTEND(readability-identifier-naming)
