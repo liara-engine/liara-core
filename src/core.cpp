@@ -37,10 +37,9 @@ uint32_t liara_core_version() {
 
 // NOLINTBEGIN(cppcoreguidelines-owning-memory)
 // NOLINTBEGIN(readability-identifier-naming)
-liara_result_t liara_core_create(liara_renderer_handle_t* renderer_handle, liara_core_handle_t** out_core) {
+liara_result_t liara_core_create(liara_core_handle_t** out_core) {
     // NOLINTEND(readability-identifier-naming)
     if (out_core == nullptr) { return LIARA_RESULT_NULL_POINTER; }
-    if (renderer_handle == nullptr) { return LIARA_RESULT_NULL_POINTER; }
     auto* core = new liara_core_handle_t();
     core->m_Valid = true;
     core->m_Core.SetCore(core);
