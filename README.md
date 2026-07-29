@@ -23,7 +23,7 @@ logging, configuration, and other essential utilities.
   and [`docs/MODULES.md`](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/book/MODULES).
 - **Day-to-day workflow**: meta repository's
   [`docs/CONTRIBUTING.md`](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/book/CONTRIBUTING).
-- **API reference** (Doxygen, deployed once Phase 0 completes):
+- **API reference** :
   [liara-engine.liara-engine-documentation.workers.dev/liara-core](https://liara-engine.liara-engine-documentation.workers.dev/).
 
 ---
