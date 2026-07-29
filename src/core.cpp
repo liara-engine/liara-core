@@ -44,7 +44,6 @@ liara_result_t liara_core_create(liara_renderer_handle_t* renderer_handle, liara
     auto* core = new liara_core_handle_t();
     core->m_Valid = true;
     core->m_Core.SetCore(core);
-    core->m_Core.SetRenderer(renderer_handle);
     *out_core = core;
     return LIARA_RESULT_SUCCESS;
 }  // NOLINTEND(cppcoreguidelines-owning-memory)
@@ -122,4 +121,12 @@ void liara_core_set_late_update_callback(liara_core_handle_t* core_handle,
     // NOLINTEND(readability-identifier-naming)
     if (core_handle == nullptr || !core_handle->m_Valid) { return; }
     core_handle->m_Core.SetLateUpdateCallback(callback);
+}
+
+// NOLINTBEGIN(readability-identifier-naming)
+liara_result_t liara_core_get_render_packet(const liara_core_handle_t* core_handle, liara_render_packet_t* out_packet) {
+    // NOLINTEND(readability-identifier-naming)
+    if (core_handle == nullptr || out_packet == nullptr) { return LIARA_RESULT_NULL_POINTER; }
+    if (!core_handle->m_Valid) { return LIARA_RESULT_INVALID_STATE; }
+    return core_handle->m_Core.GetRenderPacket(out_packet);
 }
