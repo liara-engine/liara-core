@@ -4,7 +4,6 @@
 #include <liara/modules.h>
 #include <liara/renderer/packet.h>
 #include <liara/result.h>
-#include <liara/version.h>
 
 #include <chrono>
 #include <cstdint>
@@ -15,7 +14,7 @@
 struct liara_core_t
 {
     mutable bool m_Valid = false;
-    LiaraCore m_Core;
+    Liara::Core::LiaraCore m_Core;
 };
 
 static constexpr liara_module_info_t LIARA_CORE_MODULE_INFO = {
@@ -30,10 +29,6 @@ static constexpr liara_module_info_t LIARA_CORE_MODULE_INFO = {
 const liara_module_info_t* liara_core_info(void) { return &LIARA_CORE_MODULE_INFO; }
 
 uint32_t liara_core_abi_version(void) { return LIARA_CORE_MODULE_INFO.abi_version; }
-
-uint32_t liara_core_version() {
-    return LIARA_MAKE_VERSION_UNSAFE(LIARA_CORE_MAJOR_VERSION, LIARA_CORE_MINOR_VERSION, LIARA_CORE_PATCH_VERSION);
-}
 
 // NOLINTBEGIN(cppcoreguidelines-owning-memory)
 // NOLINTBEGIN(readability-identifier-naming)
