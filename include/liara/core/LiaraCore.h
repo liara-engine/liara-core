@@ -1,39 +1,63 @@
 #pragma once
 
 #include "liara/core/core.h"
-
-#include <liara/renderer/renderer.h>
+#include <liara/renderer/packet.h>
 #include <liara/result.h>
 
-#include <chrono>
+#include <array>
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
-#include <thread>
+#include <numbers>
+#include <utility>
+#include <vector>
+
+namespace
+{
+    constexpr uint16_t GRID_WIDTH = 64;
+    constexpr uint16_t GRID_HEIGHT = 36;
+    constexpr float CENTER_X = static_cast<float>(GRID_WIDTH) / 2.0F;
+    constexpr float CENTER_Y = static_cast<float>(GRID_HEIGHT) / 2.0F;
+    constexpr uint32_t BACKGROUND_COLOR = 0xFF000000U;
+    constexpr uint32_t SUN_COLOR = 0xFFFFE066U;
+
+    constexpr size_t BODY_COUNT = 4;
+    constexpr size_t TRAIL_LENGTH = 4;
+
+    constexpr std::array<float, TRAIL_LENGTH> TRAIL_DIM_FACTORS = {0.55F, 0.35F, 0.20F, 0.10F};
+
+    constexpr std::array<std::pair<float, float>, 5> SUN_OFFSETS = {
+        {{0.0F, 0.0F}, {1.0F, 0.0F}, {-1.0F, 0.0F}, {0.0F, 1.0F}, {0.0F, -1.0F}}
+    };
+
+    constexpr uint32_t DimColor(const uint32_t COLOR, const float FACTOR) {
+        const auto R = static_cast<uint32_t>(static_cast<float>((COLOR >> 16U) & 0xFFU) * FACTOR);
+        const auto G = static_cast<uint32_t>(static_cast<float>((COLOR >> 8U) & 0xFFU) * FACTOR);
+        const auto B = static_cast<uint32_t>(static_cast<float>(COLOR & 0xFFU) * FACTOR);
+        return 0xFF000000U | (R << 16U) | (G << 8U) | B;
+    }
+}  // namespace
 
 class LiaraCore
 {
 public:
     LiaraCore()
-        : m_Core(nullptr)
-        , m_Renderer(nullptr)
-        , m_ScreenWidth(64)
-        , m_ScreenHeight(36) {
-        m_Screen.resize(m_ScreenHeight, std::vector<uint32_t>(m_ScreenWidth, 0xFF000000));  // Black background
-        constexpr uint8_t NUM_PIXELS = 20;
-        m_PixelPosX.resize(NUM_PIXELS);
-        m_PixelPosY.resize(NUM_PIXELS);
-        m_PixelVelocityX.resize(NUM_PIXELS);
-        m_PixelVelocityY.resize(NUM_PIXELS);
-        m_PixelColors.resize(NUM_PIXELS);
+        : m_Core(nullptr) {
+        m_Drawables.reserve(SUN_OFFSETS.size() + m_Bodies.size() * (TRAIL_LENGTH + 1));
 
-        for (size_t i = 0; i < NUM_PIXELS; ++i) {
-            m_PixelPosX.at(i) = static_cast<uint8_t>(rand() % m_ScreenWidth);
-            m_PixelPosY.at(i) = static_cast<uint8_t>(rand() % m_ScreenHeight);
-            m_PixelVelocityX.at(i) = static_cast<uint8_t>((rand() % 3) - 1);  // -1, 0, or 1
-            m_PixelVelocityY.at(i) = static_cast<uint8_t>((rand() % 3) - 1);  // -1, 0, or 1
-            m_PixelColors.at(i) =
-                static_cast<uint32_t>(rand() % 0xFFFFFF) | 0xFF000000;  // Random color with full alpha
+        for (size_t i = 0; i < m_Bodies.size(); ++i) {
+            OrbitingBody& body = m_Bodies.at(i);
+            body.angle =
+                static_cast<float>(i) * (2.0F * std::numbers::pi_v<float> / static_cast<float>(m_Bodies.size()))
+                + static_cast<float>(i) * 0.35F;
+
+            const float X = CENTER_X + body.radius * std::cos(body.angle);
+            const float Y = CENTER_Y + body.radius * std::sin(body.angle);
+            body.trailX.fill(X);
+            body.trailY.fill(Y);
         }
+
+        BuildRenderPacket();
     }
 
     ~LiaraCore() = default;
@@ -45,8 +69,6 @@ public:
     [[nodiscard]] bool IsStopRequested() const { return m_StopRequested; }
 
     void SetCore(liara_core_handle_t* core) { m_Core = core; }
-
-    void SetRenderer(liara_renderer_handle_t* renderer) { m_Renderer = renderer; }
 
     void SetRunMode(const liara_core_run_mode RUN_MODE, const float FIXED_TIME_STEP) {
         m_RunMode = RUN_MODE;
@@ -60,69 +82,93 @@ public:
     }
 
     void Update(const float DELTA_TIME) {
-        UpdateScreen(DELTA_TIME);
-        RenderScreen();
+        Simulate(DELTA_TIME);
+        BuildRenderPacket();
 
         if (m_LateUpdateCallback != nullptr) { m_LateUpdateCallback(m_Core, DELTA_TIME); }
     }
 
+    // The returned packet's `drawables` pointer aliases m_Drawables and stays valid only until the next Simulate()/
+    // BuildRenderPacket() (i.e. the next Update()). See liara_core_get_render_packet()'s docs in core.h.
+    [[nodiscard]] liara_result_t GetRenderPacket(liara_render_packet_t* outPacket) const {
+        if (outPacket == nullptr) { return LIARA_RESULT_NULL_POINTER; }
+        *outPacket = m_Packet;
+        return LIARA_RESULT_SUCCESS;
+    }
+
 private:
+    struct OrbitingBody
+    {
+        float radius;
+        float angularSpeed;
+        uint32_t color;
+        float angle = 0.0F;
+        std::array<float, TRAIL_LENGTH> trailX {};
+        std::array<float, TRAIL_LENGTH> trailY {};
+    };
+
     liara_core_run_mode m_RunMode = LIARA_CORE_RUN_MODE_AUTOMATIC;
     float m_FixedTimeStep = 0.016F;
     bool m_StopRequested = false;
     void (*m_LateUpdateCallback)(liara_core_handle_t* core, float deltaTime) = nullptr;
 
     liara_core_handle_t* m_Core;
-    liara_renderer_handle_t* m_Renderer;
-    uint16_t m_ScreenWidth;
-    uint16_t m_ScreenHeight;
-    std::vector<std::vector<uint32_t>> m_Screen;
-    std::vector<uint8_t> m_PixelPosX;
-    std::vector<uint8_t> m_PixelPosY;
-    std::vector<uint8_t> m_PixelVelocityX;
-    std::vector<uint8_t> m_PixelVelocityY;
-    std::vector<uint32_t> m_PixelColors;
 
-    void UpdateScreen(const float /*DELTA_TIME*/) {
-        for (size_t i = 0; i < m_PixelPosX.size(); ++i) {
-            const uint8_t PIXEL_X = m_PixelPosX.at(i);
-            const uint8_t PIXEL_Y = m_PixelPosY.at(i);
-            m_PixelPosX.at(i) += m_PixelVelocityX.at(i);
-            m_PixelPosY.at(i) += m_PixelVelocityY.at(i);
+    std::array<OrbitingBody, BODY_COUNT> m_Bodies {
+        {{.radius = 5.0F, .angularSpeed = 1.6F, .color = 0xFF6EC6FFU},
+         {.radius = 9.0F, .angularSpeed = 1.0F, .color = 0xFFFFA65CU},
+         {.radius = 12.0F, .angularSpeed = 0.7F, .color = 0xFF81C784U},
+         {.radius = 15.0F, .angularSpeed = 0.5F, .color = 0xFFCE93D8U}}
+    };
 
-            if (m_PixelPosX.at(i) >= m_ScreenWidth || m_PixelPosX.at(i) < 0) {
-                m_PixelVelocityX.at(i) = -m_PixelVelocityX.at(i);
-                m_PixelPosX.at(i) += m_PixelVelocityX.at(i);
+    std::vector<liara_render_drawable_t> m_Drawables;
+    liara_render_packet_t m_Packet {};
+
+    void Simulate(const float DELTA_TIME) {
+        for (OrbitingBody& body : m_Bodies) {
+            for (size_t age = TRAIL_LENGTH - 1; age > 0; --age) {
+                body.trailX.at(age) = body.trailX.at(age - 1);
+                body.trailY.at(age) = body.trailY.at(age - 1);
             }
+            body.trailX.at(0) = CENTER_X + body.radius * std::cos(body.angle);
+            body.trailY.at(0) = CENTER_Y + body.radius * std::sin(body.angle);
 
-            if (m_PixelPosY.at(i) >= m_ScreenHeight || m_PixelPosY.at(i) < 0) {
-                m_PixelVelocityY.at(i) = -m_PixelVelocityY.at(i);
-                m_PixelPosY.at(i) += m_PixelVelocityY.at(i);
-            }
-
-            m_Screen.at(m_PixelPosY.at(i)).at(m_PixelPosX.at(i)) = m_PixelColors.at(i);
-            m_Screen.at(PIXEL_Y).at(PIXEL_X) = 0xFF000000;
+            body.angle = std::fmod(body.angle + body.angularSpeed * DELTA_TIME, 2.0F * std::numbers::pi_v<float>);
         }
     }
 
-    void ClearScreen() const {
-        liara_renderer_set_text_color(m_Renderer, 0xFFFFFFFF);  // Set text color to whited
-        for (size_t i = 0; i < m_ScreenHeight; ++i) { liara_renderer_print(m_Renderer, "\033[0m\r\033[2K\033[A", 13); }
-    }
+    void BuildRenderPacket() {
+        m_Drawables.clear();
 
-    void RenderScreen() const {
-        static bool firstRender = true;
-        if (!firstRender) { ClearScreen(); }
-        firstRender = false;
-
-        for (const auto& row : m_Screen) {
-            for (const auto& pixel : row) {
-                liara_renderer_set_text_color(m_Renderer, pixel);
-                liara_renderer_print(m_Renderer, "██", 6);  // Print two block characters to represent a pixel
-            }
-            liara_renderer_print(m_Renderer, "\n", 1);
+        for (const auto& [OFFSET_X, OFFSET_Y] : SUN_OFFSETS) {
+            m_Drawables.push_back(liara_render_drawable_t {
+                .x = CENTER_X + OFFSET_X,
+                .y = CENTER_Y + OFFSET_Y,
+                .color = SUN_COLOR,
+            });
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        for (const OrbitingBody& body : m_Bodies) {
+            for (size_t age = TRAIL_LENGTH; age > 0; --age) {
+                const size_t INDEX = age - 1;
+                m_Drawables.push_back(liara_render_drawable_t {
+                    .x = body.trailX.at(INDEX),
+                    .y = body.trailY.at(INDEX),
+                    .color = DimColor(body.color, TRAIL_DIM_FACTORS.at(INDEX)),
+                });
+            }
+            m_Drawables.push_back(liara_render_drawable_t {
+                .x = CENTER_X + body.radius * std::cos(body.angle),
+                .y = CENTER_Y + body.radius * std::sin(body.angle),
+                .color = body.color,
+            });
+        }
+
+        m_Packet.struct_version = LIARA_RENDER_PACKET_VERSION;
+        m_Packet.grid_width = GRID_WIDTH;
+        m_Packet.grid_height = GRID_HEIGHT;
+        m_Packet.background_color = BACKGROUND_COLOR;
+        m_Packet.drawables = m_Drawables.data();
+        m_Packet.drawable_count = m_Drawables.size();
     }
 };
