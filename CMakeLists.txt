@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.29)
 
+include(GNUInstallDirs)
+
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/.release-please-manifest.json" RELEASE_PLEASE_MANIFEST)
 string(JSON PROJECT_VERSION GET ${RELEASE_PLEASE_MANIFEST} ".")
 message(STATUS "LiaraCore version: ${PROJECT_VERSION}")
@@ -17,8 +19,13 @@ configure_file(
         @ONLY)
 
 if(NOT TARGET Liara::Interfaces)
+    find_package(LiaraInterfaces CONFIG QUIET)
+endif()
+
+if(NOT TARGET Liara::Interfaces)
     message(FATAL_ERROR
-            "Liara::Interfaces is not available. Build the core through the workspace superbuild "
+            "Liara::Interfaces is not available. Either build liara-core through the workspace superbuild, "
+            "or install liara-interfaces and point find_package(LiaraInterfaces) at it via CMAKE_PREFIX_PATH "
             " (see https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/book/BOOTSTRAP)")
 endif()
 
@@ -48,7 +55,7 @@ file(GLOB_RECURSE LIARA_CORE_SOURCES CONFIGURE_DEPENDS
 add_library(liara_core ${LIARA_CORE_SOURCES})
 add_library(Liara::Core ALIAS liara_core)
 
-target_link_libraries(liara_core PRIVATE Liara::Interfaces)
+target_link_libraries(liara_core PUBLIC Liara::Interfaces)
 
 target_include_directories(liara_core PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
@@ -59,6 +66,7 @@ target_include_directories(liara_core PUBLIC
 target_compile_definitions(liara_core PRIVATE LIARA_CORE_BUILD)
 
 set_target_properties(liara_core PROPERTIES
+        EXPORT_NAME Core
         C_VISIBILITY_PRESET hidden
         CXX_VISIBILITY_PRESET hidden
         VISIBILITY_INLINES_HIDDEN ON
@@ -83,21 +91,39 @@ if(LIARA_CORE_BUILD_TESTS)
 endif()
 
 if(LIARA_CORE_INSTALL)
-    include(GNUInstallDirs)
+    include(CMakePackageConfigHelpers)
+
     install(TARGETS liara_core
             EXPORT LiaraCoreTargets
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-            INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
-    install(DIRECTORY include/liara/core
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/liara
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/liara/core"
+            DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/liara"
             FILES_MATCHING PATTERN "*.h"
     )
     install(EXPORT LiaraCoreTargets
             FILE LiaraCoreTargets.cmake
             NAMESPACE Liara::
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LiaraCore
+    )
+
+    write_basic_package_version_file(
+            "${CMAKE_CURRENT_BINARY_DIR}/LiaraCoreConfigVersion.cmake"
+            VERSION ${PROJECT_VERSION}
+            COMPATIBILITY SameMajorVersion
+    )
+
+    configure_package_config_file(
+            "${CMAKE_CURRENT_SOURCE_DIR}/cmake/LiaraCoreConfig.cmake.in"
+            "${CMAKE_CURRENT_BINARY_DIR}/LiaraCoreConfig.cmake"
+            INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LiaraCore
+    )
+
+    install(FILES
+            "${CMAKE_CURRENT_BINARY_DIR}/LiaraCoreConfig.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/LiaraCoreConfigVersion.cmake"
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LiaraCore
     )
 endif()
