@@ -72,11 +72,11 @@ void liara_core_run(liara_core_handle_t* core_handle) {
     auto currentTime = std::chrono::high_resolution_clock::now();
 
     while (!core_handle->m_Core.IsStopRequested()) {
-        const auto NEW_TIME = std::chrono::high_resolution_clock::now();
-        const std::chrono::duration<float> DELTA_TIME = NEW_TIME - currentTime;
-        currentTime = NEW_TIME;
+        const auto newTime = std::chrono::high_resolution_clock::now();
+        const std::chrono::duration<float> deltaTime = newTime - currentTime;
+        currentTime = newTime;
 
-        core_handle->m_Core.Update(DELTA_TIME.count());
+        core_handle->m_Core.Update(deltaTime.count());
 
         auto frameDuration = std::chrono::high_resolution_clock::now() - currentTime;
         if (core_handle->m_Core.GetRunMode() == LIARA_CORE_RUN_MODE_FIXED) {

@@ -30,36 +30,40 @@ namespace Liara::Core
         {{0.0F, 0.0F}, {1.0F, 0.0F}, {-1.0F, 0.0F}, {0.0F, 1.0F}, {0.0F, -1.0F}}
     };
 
-    constexpr uint32_t DimColor(const uint32_t COLOR, const float FACTOR) {
-        const auto R = static_cast<uint32_t>(static_cast<float>((COLOR >> 16U) & 0xFFU) * FACTOR);
-        const auto G = static_cast<uint32_t>(static_cast<float>((COLOR >> 8U) & 0xFFU) * FACTOR);
-        const auto B = static_cast<uint32_t>(static_cast<float>(COLOR & 0xFFU) * FACTOR);
-        return 0xFF000000U | (R << 16U) | (G << 8U) | B;
+    constexpr uint32_t DimColor(const uint32_t color, const float factor) {
+        const auto r = static_cast<uint32_t>(static_cast<float>((color >> 16U) & 0xFFU) * factor);
+        const auto g = static_cast<uint32_t>(static_cast<float>((color >> 8U) & 0xFFU) * factor);
+        const auto b = static_cast<uint32_t>(static_cast<float>(color & 0xFFU) * factor);
+        return 0xFF000000U | (r << 16U) | (g << 8U) | b;
     }
 
     class LiaraCore
     {
     public:
-        LiaraCore()
-            : m_Core(nullptr) {
-            m_Drawables.reserve(SUN_OFFSETS.size() + m_Bodies.size() * (TRAIL_LENGTH + 1));
+        LiaraCore() {
+            m_Drawables.reserve(SUN_OFFSETS.size() + (m_Bodies.size() * (TRAIL_LENGTH + 1)));
 
             for (size_t i = 0; i < m_Bodies.size(); ++i) {
                 OrbitingBody& body = m_Bodies.at(i);
-                body.angle =
-                    static_cast<float>(i) * (2.0F * std::numbers::pi_v<float> / static_cast<float>(m_Bodies.size()))
-                    + static_cast<float>(i) * 0.35F;
+                body.m_Angle =
+                    (static_cast<float>(i) * (2.0F * std::numbers::pi_v<float> / static_cast<float>(m_Bodies.size())))
+                    + (static_cast<float>(i) * 0.35F);
 
-                const float X = CENTER_X + body.radius * std::cos(body.angle);
-                const float Y = CENTER_Y + body.radius * std::sin(body.angle);
-                body.trailX.fill(X);
-                body.trailY.fill(Y);
+                const float x = CENTER_X + (body.m_Radius * std::cos(body.m_Angle));
+                const float y = CENTER_Y + (body.m_Radius * std::sin(body.m_Angle));
+                body.m_TrailX.fill(x);
+                body.m_TrailY.fill(y);
             }
 
             BuildRenderPacket();
         }
 
         ~LiaraCore() = default;
+
+        LiaraCore(const LiaraCore&) = delete;
+        LiaraCore& operator=(const LiaraCore&) = delete;
+        LiaraCore(LiaraCore&&) = delete;
+        LiaraCore& operator=(LiaraCore&&) = delete;
 
         [[nodiscard]] liara_core_run_mode GetRunMode() const { return m_RunMode; }
 
@@ -69,9 +73,9 @@ namespace Liara::Core
 
         void SetCore(liara_core_handle_t* core) { m_Core = core; }
 
-        void SetRunMode(const liara_core_run_mode RUN_MODE, const float FIXED_TIME_STEP) {
-            m_RunMode = RUN_MODE;
-            m_FixedTimeStep = FIXED_TIME_STEP;
+        void SetRunMode(const liara_core_run_mode runMode, const float fixedTimeStep) {
+            m_RunMode = runMode;
+            m_FixedTimeStep = fixedTimeStep;
         }
 
         void StopRequested() { m_StopRequested = true; }
@@ -80,11 +84,11 @@ namespace Liara::Core
             m_LateUpdateCallback = callback;
         }
 
-        void Update(const float DELTA_TIME) {
-            Simulate(DELTA_TIME);
+        void Update(const float deltaTime) {
+            Simulate(deltaTime);
             BuildRenderPacket();
 
-            if (m_LateUpdateCallback != nullptr) { m_LateUpdateCallback(m_Core, DELTA_TIME); }
+            if (m_LateUpdateCallback != nullptr) { m_LateUpdateCallback(m_Core, deltaTime); }
         }
 
         // The returned packet's `drawables` pointer aliases m_Drawables and stays valid only until the next Simulate()/
@@ -98,12 +102,12 @@ namespace Liara::Core
     private:
         struct OrbitingBody
         {
-            float radius;
-            float angularSpeed;
-            uint32_t color;
-            float angle = 0.0F;
-            std::array<float, TRAIL_LENGTH> trailX {};
-            std::array<float, TRAIL_LENGTH> trailY {};
+            float m_Radius;
+            float m_AngularSpeed;
+            uint32_t m_Color;
+            float m_Angle = 0.0F;
+            std::array<float, TRAIL_LENGTH> m_TrailX {};
+            std::array<float, TRAIL_LENGTH> m_TrailY {};
         };
 
         liara_core_run_mode m_RunMode = LIARA_CORE_RUN_MODE_AUTOMATIC;
@@ -111,28 +115,29 @@ namespace Liara::Core
         bool m_StopRequested = false;
         void (*m_LateUpdateCallback)(liara_core_handle_t* core, float deltaTime) = nullptr;
 
-        liara_core_handle_t* m_Core;
+        liara_core_handle_t* m_Core {nullptr};
 
         std::array<OrbitingBody, BODY_COUNT> m_Bodies {
-            {{.radius = 5.0F, .angularSpeed = 1.6F, .color = 0xFF6EC6FFU},
-             {.radius = 9.0F, .angularSpeed = 1.0F, .color = 0xFFFFA65CU},
-             {.radius = 12.0F, .angularSpeed = 0.7F, .color = 0xFF81C784U},
-             {.radius = 15.0F, .angularSpeed = 0.5F, .color = 0xFFCE93D8U}}
+            {{.m_Radius = 5.0F, .m_AngularSpeed = 1.6F, .m_Color = 0xFF6EC6FFU},
+             {.m_Radius = 9.0F, .m_AngularSpeed = 1.0F, .m_Color = 0xFFFFA65CU},
+             {.m_Radius = 12.0F, .m_AngularSpeed = 0.7F, .m_Color = 0xFF81C784U},
+             {.m_Radius = 15.0F, .m_AngularSpeed = 0.5F, .m_Color = 0xFFCE93D8U}}
         };
 
         std::vector<liara_render_drawable_t> m_Drawables;
         liara_render_packet_t m_Packet {};
 
-        void Simulate(const float DELTA_TIME) {
+        void Simulate(const float deltaTime) {
             for (OrbitingBody& body : m_Bodies) {
                 for (size_t age = TRAIL_LENGTH - 1; age > 0; --age) {
-                    body.trailX.at(age) = body.trailX.at(age - 1);
-                    body.trailY.at(age) = body.trailY.at(age - 1);
+                    body.m_TrailX.at(age) = body.m_TrailX.at(age - 1);
+                    body.m_TrailY.at(age) = body.m_TrailY.at(age - 1);
                 }
-                body.trailX.at(0) = CENTER_X + body.radius * std::cos(body.angle);
-                body.trailY.at(0) = CENTER_Y + body.radius * std::sin(body.angle);
+                body.m_TrailX.at(0) = CENTER_X + (body.m_Radius * std::cos(body.m_Angle));
+                body.m_TrailY.at(0) = CENTER_Y + (body.m_Radius * std::sin(body.m_Angle));
 
-                body.angle = std::fmod(body.angle + body.angularSpeed * DELTA_TIME, 2.0F * std::numbers::pi_v<float>);
+                body.m_Angle =
+                    std::fmod(body.m_Angle + (body.m_AngularSpeed * deltaTime), 2.0F * std::numbers::pi_v<float>);
             }
         }
 
@@ -149,17 +154,17 @@ namespace Liara::Core
 
             for (const OrbitingBody& body : m_Bodies) {
                 for (size_t age = TRAIL_LENGTH; age > 0; --age) {
-                    const size_t INDEX = age - 1;
+                    const size_t index = age - 1;
                     m_Drawables.push_back(liara_render_drawable_t {
-                        .x = body.trailX.at(INDEX),
-                        .y = body.trailY.at(INDEX),
-                        .color = DimColor(body.color, TRAIL_DIM_FACTORS.at(INDEX)),
+                        .x = body.m_TrailX.at(index),
+                        .y = body.m_TrailY.at(index),
+                        .color = DimColor(body.m_Color, TRAIL_DIM_FACTORS.at(index)),
                     });
                 }
                 m_Drawables.push_back(liara_render_drawable_t {
-                    .x = CENTER_X + body.radius * std::cos(body.angle),
-                    .y = CENTER_Y + body.radius * std::sin(body.angle),
-                    .color = body.color,
+                    .x = CENTER_X + (body.m_Radius * std::cos(body.m_Angle)),
+                    .y = CENTER_Y + (body.m_Radius * std::sin(body.m_Angle)),
+                    .color = body.m_Color,
                 });
             }
 
