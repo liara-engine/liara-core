@@ -3,6 +3,10 @@ on:
   pull_request:
     types: [closed]
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   cleanup:
     uses: liara-engine/.github/.github/workflows/reusable-docs-preview-cleanup.yml@v0
