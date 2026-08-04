@@ -16,6 +16,7 @@ jobs:
     uses: liara-engine/.github/.github/workflows/reusable-module-build.yml@preview-24
     with:
       module: liara-core
+      interfaces-ref: main # TODO: Find a better way
       github-repo-version: preview-24
 
   format:
