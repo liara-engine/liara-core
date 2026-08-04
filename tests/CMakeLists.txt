@@ -6,3 +6,4 @@ target_link_libraries(test_core_functions_cxx PRIVATE
         Liara::Core
         doctest::doctest)
 add_test(NAME test_core_functions_cxx COMMAND test_core_functions_cxx)
+set_tests_properties(test_core_functions_cxx PROPERTIES LABELS "unit")
