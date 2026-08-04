@@ -1,0 +1,26 @@
+name: branch
+
+on:
+  push:
+    branches-ignore: [main]
+
+concurrency:
+  group: branch-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: liara-engine/.github/.github/workflows/reusable-module-build.yml@preview-24
+    with:
+      module: liara-core
+      github-repo-version: preview-24
+
+  format:
+    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@preview-24
+    with:
+      module: liara-core
+      run-tidy: false
+      github-repo-version: preview-24
