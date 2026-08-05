@@ -1,4 +1,5 @@
 #include <liara/abi_version.h>
+#include <liara/core/config.h>
 #include <liara/core/core.h>
 #include <liara/core/LiaraCore.h>
 #include <liara/modules.h>
@@ -8,8 +9,6 @@
 #include <chrono>
 #include <cstdint>
 #include <thread>
-
-#include <config.h>
 
 struct liara_core_t
 {
