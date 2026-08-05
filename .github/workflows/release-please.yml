@@ -25,7 +25,7 @@ jobs:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created }}
     permissions:
-      contents: read
+      contents: write
     uses: liara-engine/.github/.github/workflows/reusable-release-artifacts.yml@v1
     with:
       module: liara-core
