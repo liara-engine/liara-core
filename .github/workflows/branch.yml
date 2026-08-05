@@ -13,15 +13,15 @@ permissions:
 
 jobs:
   build:
-    uses: liara-engine/.github/.github/workflows/reusable-module-build.yml@preview-24
+    uses: liara-engine/.github/.github/workflows/reusable-module-build.yml@v1
     with:
       module: liara-core
       interfaces-ref: main # TODO: Find a better way
-      github-repo-version: preview-24
+      github-repo-version: v1
 
   format:
-    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@preview-24
+    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@v1
     with:
       module: liara-core
       run-tidy: false
-      github-repo-version: preview-24
+      github-repo-version: v1
