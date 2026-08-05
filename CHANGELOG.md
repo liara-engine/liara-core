@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.1](https://github.com/liara-engine/liara-core/compare/v0.2.0...v0.2.1) (2026-08-05)
+
+
+### Features
+
+* **manifest:** add new version entry for 0.2.1 with ABI compatibility ([1222d9d](https://github.com/liara-engine/liara-core/commit/1222d9d5f6d13b92b895442f5a36816fb298b670))
+
+
+### Bug Fixes
+
+* **ci:** remove tag trigger from main branch push events ([16b70b8](https://github.com/liara-engine/liara-core/commit/16b70b82d12666b0bd51ada8a27a70cda3d4b1c8))
+* **release:** update version output to use tag name in release workflow ([d98e838](https://github.com/liara-engine/liara-core/commit/d98e838e5f06aae5976222fc6b97e34ccbe13e06))
+
 ## [0.2.0](https://github.com/liara-engine/liara-core/compare/v0.1.0...v0.2.0) (2026-08-05)
 
 
