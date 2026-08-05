@@ -27,7 +27,7 @@ jobs:
     permissions:
       contents: read
     uses: liara-engine/.github/.github/workflows/reusable-release-artifacts.yml@v1
-      with:
-        module: liara-core
-        version: ${{ needs.release-please.outputs.version }}
-        github-repo-version: v1
+    with:
+      module: liara-core
+      version: ${{ needs.release-please.outputs.version }}
+      github-repo-version: v1
