@@ -15,7 +15,7 @@ project(LiaraCore
 
 configure_file(
         "${CMAKE_CURRENT_SOURCE_DIR}/include/liara/core/config.h.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/generated/config.h"
+        "${CMAKE_CURRENT_BINARY_DIR}/generated/liara/core/config.h"
         @ONLY)
 
 if(NOT TARGET Liara::Interfaces)
@@ -95,18 +95,27 @@ if(LIARA_CORE_INSTALL)
 
     install(TARGETS liara_core
             EXPORT LiaraCoreTargets
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT liara-core-runtime
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT liara-core-runtime
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT liara-core-dev
     )
+
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/liara/core"
             DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/liara"
+            COMPONENT liara-core-dev
             FILES_MATCHING PATTERN "*.h"
     )
+
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/generated/liara/core/config.h"
+            DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/liara/core"
+            COMPONENT liara-core-dev
+    )
+
     install(EXPORT LiaraCoreTargets
             FILE LiaraCoreTargets.cmake
             NAMESPACE Liara::
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LiaraCore
+            COMPONENT liara-core-dev
     )
 
     write_basic_package_version_file(
@@ -125,5 +134,6 @@ if(LIARA_CORE_INSTALL)
             "${CMAKE_CURRENT_BINARY_DIR}/LiaraCoreConfig.cmake"
             "${CMAKE_CURRENT_BINARY_DIR}/LiaraCoreConfigVersion.cmake"
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LiaraCore
+            COMPONENT liara-core-dev
     )
 endif()
