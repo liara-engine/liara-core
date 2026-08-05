@@ -1,0 +1,27 @@
+name: branch
+
+on:
+  push:
+    branches-ignore: [main]
+
+concurrency:
+  group: branch-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: liara-engine/.github/.github/workflows/reusable-module-build.yml@v1
+    with:
+      module: liara-core
+      interfaces-ref: main # TODO: Find a better way
+      github-repo-version: v1
+
+  format:
+    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@v1
+    with:
+      module: liara-core
+      run-tidy: false
+      github-repo-version: v1
