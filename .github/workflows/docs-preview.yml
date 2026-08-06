@@ -18,13 +18,12 @@ jobs:
         with:
           filters: |
             docs:
-              - '.github/workflows/**'
+              - '.github/workflows/docs-preview.yml'
               - 'docs/**'
-              - 'book.toml'
-              - 'Doxyfile'
               - 'include/**'
               - 'src/**'
-              - 'manifest.json'
+              - 'book.toml'
+              - 'Doxyfile'
               - 'README.md'
 
   preview:
