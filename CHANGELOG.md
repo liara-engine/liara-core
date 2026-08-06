@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.2](https://github.com/liara-engine/liara-core/compare/v0.2.1...v0.2.2) (2026-08-06)
+
+
+### Features
+
+* **manifest:** add new version entry for 0.2.2 with ABI compatibility ([3f71bf0](https://github.com/liara-engine/liara-core/commit/3f71bf04b842a9dfdc9cf1ab0d97e187dd1c47e1))
+
+
+### Bug Fixes
+
+* **release:** update version output in release-please configuration ([0d29fe2](https://github.com/liara-engine/liara-core/commit/0d29fe2a5be1d1f2aca3f3babd1da9b64224b8f7))
+
 ## [0.2.1](https://github.com/liara-engine/liara-core/compare/v0.2.0...v0.2.1) (2026-08-05)
 
 
