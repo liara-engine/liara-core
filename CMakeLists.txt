@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.29)
 
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+    message(FATAL_ERROR
+            "In-source builds are not supported. Build into build/<preset-name>/ instead, which is "
+            "what the presets already do:\n"
+            "    cmake --preset linux-debug-clang\n"
+            "Remove the CMakeCache.txt and CMakeFiles/ this attempt just created before retrying.")
+endif()
+
 include(GNUInstallDirs)
 
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/.release-please-manifest.json" RELEASE_PLEASE_MANIFEST)
@@ -55,6 +63,8 @@ file(GLOB_RECURSE LIARA_CORE_SOURCES CONFIGURE_DEPENDS
 add_library(liara_core ${LIARA_CORE_SOURCES})
 add_library(Liara::Core ALIAS liara_core)
 
+liara_configure_target(liara_core)
+
 target_link_libraries(liara_core PUBLIC Liara::Interfaces)
 
 target_include_directories(liara_core PUBLIC
@@ -67,10 +77,6 @@ target_compile_definitions(liara_core PRIVATE LIARA_CORE_BUILD)
 
 set_target_properties(liara_core PROPERTIES
         EXPORT_NAME Core
-        C_VISIBILITY_PRESET hidden
-        CXX_VISIBILITY_PRESET hidden
-        VISIBILITY_INLINES_HIDDEN ON
-        POSITION_INDEPENDENT_CODE ON
         SOVERSION ${PROJECT_VERSION_MAJOR}
         VERSION ${PROJECT_VERSION}
 )
@@ -79,10 +85,6 @@ if(BUILD_SHARED_LIBS)
     target_compile_definitions(liara_core PUBLIC LIARA_CORE_SHARED)
 else()
     target_compile_definitions(liara_core PUBLIC LIARA_CORE_STATIC)
-endif()
-
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(liara_core PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
 endif()
 
 if(LIARA_CORE_BUILD_TESTS)
