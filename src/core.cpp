@@ -20,6 +20,7 @@ static constexpr liara_module_info_t LIARA_CORE_MODULE_INFO = {
     .struct_version = LIARA_MODULE_INFO_VERSION,
     .abi_version = LIARA_ABI_VERSION,
     .module_version = LIARA_CORE_VERSION,
+    .reserved = 0,
     .module_name = "Core",
     .abi_version_str = LIARA_ABI_VERSION_STR,
     .module_version_str = LIARA_CORE_VERSION_STRING,
