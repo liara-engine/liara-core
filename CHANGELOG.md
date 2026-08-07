@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/liara-engine/liara-core/compare/v0.2.2...v0.2.3) (2026-08-07)
+
+
+### Bug Fixes
+
+* enhance CI workflows and improve core module configuration ([#16](https://github.com/liara-engine/liara-core/issues/16)) ([5ab45bd](https://github.com/liara-engine/liara-core/commit/5ab45bdbda014972f5deb2dd37ad8736ccfe02fa))
+
 ## [0.2.2](https://github.com/liara-engine/liara-core/compare/v0.2.1...v0.2.2) (2026-08-06)
 
 
