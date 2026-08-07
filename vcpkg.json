@@ -1,6 +1,6 @@
 {
   "name": "liara-core",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "The core library for the Liara game engine.",
   "homepage": "https://github.com/liara-engine/liara-core",
   "license": "MIT",
