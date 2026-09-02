@@ -39,13 +39,13 @@ permissions:
 
 jobs:
   build-and-test:
-    uses: liara-engine/.github/.github/workflows/reusable-build-and-test.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-build-and-test.yml@v2
     with:
       module: liara-core
       github-repo-version: v1
 
   lint:
-    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@v2
     with:
       module: liara-core
       github-repo-version: v1
@@ -56,7 +56,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: liara-engine/.github/.github/workflows/reusable-ci-report.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-ci-report.yml@v2
     with:
       title: 'CI report'
       header: 'ci-report'
