@@ -27,9 +27,9 @@ jobs:
     if: ${{ needs.release-please.outputs.release_created }}
     permissions:
       contents: write
-    uses: liara-engine/.github/.github/workflows/reusable-release-artifacts.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-release-artifacts.yml@v2
     with:
       module: liara-core
       version: ${{ needs.release-please.outputs.version }}
       tag_name: ${{ needs.release-please.outputs.tag_name }}
-      github-repo-version: v1
+      github-repo-version: v2
