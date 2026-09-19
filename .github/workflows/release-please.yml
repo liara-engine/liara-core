@@ -32,4 +32,4 @@ jobs:
       module: liara-core
       version: ${{ needs.release-please.outputs.version }}
       tag_name: ${{ needs.release-please.outputs.tag_name }}
-      github-repo-version: v1
+      github-repo-version: v2

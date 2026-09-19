@@ -27,12 +27,11 @@ jobs:
     uses: liara-engine/.github/.github/workflows/reusable-module-build.yml@v2
     with:
       module: liara-core
-      interfaces-ref: main # TODO: Find a better way
-      github-repo-version: v1
+      github-repo-version: v2
 
   format:
     uses: liara-engine/.github/.github/workflows/reusable-lint.yml@v2
     with:
       module: liara-core
       run-tidy: false
-      github-repo-version: v1
+      github-repo-version: v2
