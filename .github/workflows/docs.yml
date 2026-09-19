@@ -28,9 +28,9 @@ jobs:
     with:
       image: ghcr.io/liara-engine/liara-documentation-builder:latest
       output-repository: liara-engine/liara-docs
-      output-branch: cloudflare-pages
-      deployment-version: ${{ github.ref_type == 'tag' && github.ref_name || 'dev' }}
-      erase-existing-output: true
+      source-repository: liara-engine/liara
+      repo: ${{ github.repository }}
+      version: ${{ github.ref_type == 'tag' && github.ref_name || 'dev' }}
 
     secrets:
       ghcr-token: ${{ secrets.GITHUB_TOKEN }}
