@@ -7,6 +7,13 @@ sidebar:
 
 # Changelog
 
+## [0.2.4](https://github.com/liara-engine/liara-core/compare/v0.2.3...v0.2.4) (2026-09-19)
+
+
+### Bug Fixes
+
+* **docs:** update source repository reference to liara-core ([9eb05f7](https://github.com/liara-engine/liara-core/commit/9eb05f770c32d13bb03892edb0339d2bfbb9c0ef))
+
 ## [0.2.3](https://github.com/liara-engine/liara-core/compare/v0.2.2...v0.2.3) (2026-08-07)
 
 
