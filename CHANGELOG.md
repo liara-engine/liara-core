@@ -7,6 +7,15 @@ sidebar:
 
 # Changelog
 
+## [0.2.4](https://github.com/liara-engine/liara-core/compare/v0.2.3...v0.2.4) (2026-09-20)
+
+
+### Bug Fixes
+
+* **ci:** remove main branch trigger since push to main is now refused ([65e0243](https://github.com/liara-engine/liara-core/commit/65e02431465549818eecc169fe791c5d6f99027e))
+* **clang-tidy:** adjust header filter regex and update checks ([42cd9bd](https://github.com/liara-engine/liara-core/commit/42cd9bdb8b541df287b8531e248cd2aa0ff5553b))
+* **docs:** update source repository reference to liara-core ([9eb05f7](https://github.com/liara-engine/liara-core/commit/9eb05f770c32d13bb03892edb0339d2bfbb9c0ef))
+
 ## [0.2.3](https://github.com/liara-engine/liara-core/compare/v0.2.2...v0.2.3) (2026-08-07)
 
 
