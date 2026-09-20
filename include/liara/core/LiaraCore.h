@@ -1,6 +1,5 @@
 #pragma once
 
-#include <liara/core/core.h>
 #include <liara/renderer/packet.h>
 #include <liara/result.h>
 
@@ -65,30 +64,9 @@ namespace Liara::Core
         LiaraCore(LiaraCore&&) = delete;
         LiaraCore& operator=(LiaraCore&&) = delete;
 
-        [[nodiscard]] liara_core_run_mode GetRunMode() const { return m_RunMode; }
-
-        [[nodiscard]] float GetFixedTimeStep() const { return m_FixedTimeStep; }
-
-        [[nodiscard]] bool IsStopRequested() const { return m_StopRequested; }
-
-        void SetCore(liara_core_handle_t* core) { m_Core = core; }
-
-        void SetRunMode(const liara_core_run_mode runMode, const float fixedTimeStep) {
-            m_RunMode = runMode;
-            m_FixedTimeStep = fixedTimeStep;
-        }
-
-        void StopRequested() { m_StopRequested = true; }
-
-        void SetLateUpdateCallback(void (*callback)(liara_core_handle_t* core, float deltaTime)) {
-            m_LateUpdateCallback = callback;
-        }
-
         void Update(const float deltaTime) {
             Simulate(deltaTime);
             BuildRenderPacket();
-
-            if (m_LateUpdateCallback != nullptr) { m_LateUpdateCallback(m_Core, deltaTime); }
         }
 
         // The returned packet's `drawables` pointer aliases m_Drawables and stays valid only until the next Simulate()/
@@ -109,13 +87,6 @@ namespace Liara::Core
             std::array<float, TRAIL_LENGTH> m_TrailX {};
             std::array<float, TRAIL_LENGTH> m_TrailY {};
         };
-
-        liara_core_run_mode m_RunMode = LIARA_CORE_RUN_MODE_AUTOMATIC;
-        float m_FixedTimeStep = 0.016F;
-        bool m_StopRequested = false;
-        void (*m_LateUpdateCallback)(liara_core_handle_t* core, float deltaTime) = nullptr;
-
-        liara_core_handle_t* m_Core {nullptr};
 
         std::array<OrbitingBody, BODY_COUNT> m_Bodies {
             {{.m_Radius = 5.0F, .m_AngularSpeed = 1.6F, .m_Color = 0xFF6EC6FFU},
