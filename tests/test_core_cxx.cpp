@@ -42,17 +42,15 @@ TEST_CASE("liara_core_create - null out_core") {
     CHECK(result == LIARA_RESULT_NULL_POINTER);
 }
 
-TEST_CASE("liara_core_destroy - success") {
+TEST_CASE("liara_core_destroy - destroys a created core") {
     liara_core_handle_t* core = nullptr;
-    liara_core_create(&core);
-
-    const liara_result_t result = liara_core_destroy(core);
-    CHECK(result == LIARA_RESULT_SUCCESS);
+    REQUIRE(liara_core_create(&core) == LIARA_RESULT_SUCCESS);
+    REQUIRE(core != nullptr);
+    liara_core_destroy(core);
 }
 
-TEST_CASE("liara_core_destroy - null pointer") {
-    const liara_result_t result = liara_core_destroy(nullptr);
-    CHECK(result == LIARA_RESULT_NULL_POINTER);
+TEST_CASE("liara_core_destroy - a null handle is a no-op") {
+    liara_core_destroy(nullptr);
 }
 
 TEST_CASE("liara_core_get_render_packet - null core_handle") {
