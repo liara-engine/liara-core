@@ -7,6 +7,23 @@ sidebar:
 
 # Changelog
 
+## [0.3.0](https://github.com/liara-engine/liara-core/compare/v0.2.4...v0.3.0) (2026-09-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* liara_core_destroy returns void instead of liara_result_t and takes a non-const liara_core_handle_t*. A caller that checked the return value no longer compiles.
+* **loop:** liara_core_set_run_mode, liara_core_run, liara_core_stop and liara_core_set_late_update_callback are no longer exported. Ticking the core is liara_core_update, once per frame, from the host's own loop.
+
+### Features
+
+* **loop:** drop the run-mode and callback primitives ([#21](https://github.com/liara-engine/liara-core/issues/21)) ([b3115c2](https://github.com/liara-engine/liara-core/commit/b3115c26309aa444115e7c6400a5808412f87f8b))
+
+
+### Code Refactoring
+
+* destroy returns void ([#23](https://github.com/liara-engine/liara-core/issues/23)) ([67468a6](https://github.com/liara-engine/liara-core/commit/67468a6ac1d1eb943a3b60b30cfffcbeffc44478))
+
 ## [0.2.4](https://github.com/liara-engine/liara-core/compare/v0.2.3...v0.2.4) (2026-09-20)
 
 
