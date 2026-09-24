@@ -10,7 +10,7 @@
 
 struct liara_core_t
 {
-    mutable bool m_Valid = false;
+    bool m_Valid = false;
     Liara::Core::LiaraCore m_Core;
 };
 
@@ -41,12 +41,9 @@ liara_result_t liara_core_create(liara_core_handle_t** out_core) {
 
 // NOLINTBEGIN(cppcoreguidelines-owning-memory)
 // NOLINTBEGIN(readability-identifier-naming)
-liara_result_t liara_core_destroy(const liara_core_handle_t* core_handle) {
+void liara_core_destroy(liara_core_handle_t* core_handle) {
     // NOLINTEND(readability-identifier-naming)
-    if (core_handle == nullptr) { return LIARA_RESULT_NULL_POINTER; }
-    if (!core_handle->m_Valid) { return LIARA_RESULT_INVALID_STATE; }
     delete core_handle;
-    return LIARA_RESULT_SUCCESS;
 }  // NOLINTEND(cppcoreguidelines-owning-memory)
 
 // NOLINTBEGIN(readability-identifier-naming)
