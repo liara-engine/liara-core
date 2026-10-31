@@ -40,9 +40,9 @@ liara_result_t liara_core_create(liara_core_handle_t** out_core) {
 }  // NOLINTEND(cppcoreguidelines-owning-memory)
 
 // NOLINTBEGIN(cppcoreguidelines-owning-memory)
-// NOLINTBEGIN(readability-identifier-naming)
+// NOLINTBEGIN(readability-identifier-naming, misc-const-correctness)
 void liara_core_destroy(liara_core_handle_t* core_handle) {
-    // NOLINTEND(readability-identifier-naming)
+    // NOLINTEND(readability-identifier-naming, misc-const-correctness)
     delete core_handle;
 }  // NOLINTEND(cppcoreguidelines-owning-memory)
 
