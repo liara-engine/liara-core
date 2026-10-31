@@ -49,9 +49,7 @@ TEST_CASE("liara_core_destroy - destroys a created core") {
     liara_core_destroy(core);
 }
 
-TEST_CASE("liara_core_destroy - a null handle is a no-op") {
-    liara_core_destroy(nullptr);
-}
+TEST_CASE("liara_core_destroy - a null handle is a no-op") { liara_core_destroy(nullptr); }
 
 TEST_CASE("liara_core_get_render_packet - null core_handle") {
     liara_render_packet_t packet {};
