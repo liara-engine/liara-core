@@ -17,7 +17,7 @@ namespace Liara::Core
     constexpr uint16_t GRID_HEIGHT = 36;
     constexpr float CENTER_X = static_cast<float>(GRID_WIDTH) / 2.0F;
     constexpr float CENTER_Y = static_cast<float>(GRID_HEIGHT) / 2.0F;
-    constexpr uint32_t BACKGROUND_COLOR = 0xFF000000U;
+    constexpr uint32_t BACKGROUND_COLOR = 0xFF1A2440U;
     constexpr uint32_t SUN_COLOR = 0xFFFFE066U;
 
     constexpr size_t BODY_COUNT = 4;
