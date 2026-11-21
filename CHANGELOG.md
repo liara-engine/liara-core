@@ -7,6 +7,26 @@ sidebar:
 
 # Changelog
 
+## [0.3.0](https://github.com/liara-engine/liara-core/compare/v0.2.4...v0.3.0) (2026-11-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* the core produces render packets of version 2, and gains liara_core_draw_mesh.
+* liara_core_destroy returns void instead of liara_result_t and takes a non-const liara_core_handle_t*. A caller that checked the return value no longer compiles.
+* **loop:** liara_core_set_run_mode, liara_core_run, liara_core_stop and liara_core_set_late_update_callback are no longer exported. Ticking the core is liara_core_update, once per frame, from the host's own loop.
+
+### Features
+
+* dark blue background in the render packet ([#25](https://github.com/liara-engine/liara-core/issues/25)) ([18d5b97](https://github.com/liara-engine/liara-core/commit/18d5b9768dfbd6fc46bf4f22f72da7ed990dcfb1))
+* **loop:** drop the run-mode and callback primitives ([#21](https://github.com/liara-engine/liara-core/issues/21)) ([b3115c2](https://github.com/liara-engine/liara-core/commit/b3115c26309aa444115e7c6400a5808412f87f8b))
+* produce the triangle's view and drawable, and drop the orbit demo ([#26](https://github.com/liara-engine/liara-core/issues/26)) ([4a31359](https://github.com/liara-engine/liara-core/commit/4a31359d505486cfb56aea8fcf9340a4e18e6fb2))
+
+
+### Code Refactoring
+
+* destroy returns void ([#23](https://github.com/liara-engine/liara-core/issues/23)) ([67468a6](https://github.com/liara-engine/liara-core/commit/67468a6ac1d1eb943a3b60b30cfffcbeffc44478))
+
 ## [0.2.4](https://github.com/liara-engine/liara-core/compare/v0.2.3...v0.2.4) (2026-09-20)
 
 
