@@ -34,15 +34,11 @@ It also never creates, loads or references another module. Pairing it with a ren
 
 ## What exists today
 
-A placeholder. The core can be created, configured with a run mode, ticked, asked for a render packet, and destroyed, which is enough to prove module composition works end to end. None of the subsystems above is written: `src/` holds one file, and `vcpkg.json` declares no runtime dependency at all.
+A placeholder. The core can be created, ticked, told which mesh to draw, asked for a render packet, and destroyed, which is enough to prove module composition works end to end. None of the subsystems above is written: `src/` holds one file, and `vcpkg.json` declares no runtime dependency at all.
+
+The packet it builds is v0.1's experimental one: a single view on the window, cleared to dark blue, which draws one mesh once the host has named it through `liara_core_draw_mesh()`. That entry point is experimental too. It stands in for what v0.2 turns into creating an entity with a mesh component, and it goes with the packet in ABI 2.0.0. Nothing simulates, so a tick only rebuilds the packet.
 
 The ECS and the maths types arrive with v0.2, and the [roadmap](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/guides/roadmap/v0-2/) says what that milestone contains.
-
-:::caution[Three provisional entry points]
-`liara_core_set_run_mode()`, `liara_core_run()` and `liara_core_stop()` currently let the core own the application loop and call back into the host. They exist to make the Phase 0 demo runnable, they are marked provisional in `core.h`, and they are removed in ABI 1.0.x.
-
-`LIARA_CORE_RUN_MODE_MANUAL` plus `liara_core_update()` is the arrangement the architecture actually describes, it exists today, and it is what the test suite uses.
-:::
 
 ## Where to go next
 
