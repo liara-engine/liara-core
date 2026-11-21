@@ -2,6 +2,7 @@
 #include <liara/core/config.h>
 #include <liara/core/core.h>
 #include <liara/core/LiaraCore.h>
+#include <liara/mesh.h>
 #include <liara/modules.h>
 #include <liara/renderer/packet.h>
 #include <liara/result.h>
@@ -59,4 +60,13 @@ liara_result_t liara_core_get_render_packet(const liara_core_handle_t* core_hand
     if (core_handle == nullptr || out_packet == nullptr) { return LIARA_RESULT_NULL_POINTER; }
     if (!core_handle->m_Valid) { return LIARA_RESULT_INVALID_STATE; }
     return core_handle->m_Core.GetRenderPacket(out_packet);
+}
+
+// NOLINTBEGIN(readability-identifier-naming)
+liara_result_t liara_core_draw_mesh(liara_core_handle_t* core_handle, liara_mesh_id_t mesh) {
+    // NOLINTEND(readability-identifier-naming)
+    if (core_handle == nullptr) { return LIARA_RESULT_NULL_POINTER; }
+    if (!core_handle->m_Valid) { return LIARA_RESULT_INVALID_STATE; }
+    core_handle->m_Core.DrawMesh(mesh);
+    return LIARA_RESULT_SUCCESS;
 }

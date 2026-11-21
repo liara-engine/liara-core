@@ -15,7 +15,7 @@ It owns the data model the rest of the engine agrees on, and it is still a sibli
 
 ## Status
 
-**Phase 0.** What exists is a placeholder implementation sufficient to prove the module composition works end to end: a core that can be created, ticked, and asked for a render packet. The ECS arrives with v0.2, and none of the subsystems listed above is written yet.
+**v0.1, in progress.** What exists is a placeholder implementation sufficient to prove the module composition works end to end: a core that can be created, ticked, told which mesh to draw, and asked for v0.1's experimental render packet, one view on the window that draws that mesh. The ECS arrives with v0.2, and none of the subsystems listed above is written yet.
 
 ## Documentation
 
